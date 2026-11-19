@@ -1,8 +1,3 @@
-"""
-Project 3: ATM and Bank Account Simulator
-Group 3: Eklavya Tyagi, Ashish Kumar, Manish Kumar, Sumit Raj
-"""
-
 # Set of valid note denominations
 VALID_NOTES = {2000, 500, 200, 100}
 
