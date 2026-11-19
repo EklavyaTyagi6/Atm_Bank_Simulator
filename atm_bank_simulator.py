@@ -24,8 +24,7 @@ def verify_login(accounts):
     print("Maximum login attempts reached.")
     return None
 
+# Adds the deposit amount to the balance.
+
 def deposit_money(balance, amount):
-    """
-    Adds the deposit amount to the balance.
-    """
     return balance + amount
