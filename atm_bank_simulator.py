@@ -59,7 +59,9 @@ def dispense_notes(amount):
                 count += 1
             if count > 0:
                 notes_dispensed[note] = count
-
+    print("Notes dispensed:")
+    for note, count in notes_dispensed.items():
+        print(f"Rs. {note} x {count}")
 def calc_compound_interest(principal, rate, years):
     """
     Recursive function to calculate compound interest.
@@ -79,6 +81,4 @@ def show_mini_statement(transactions):
     for t_type, t_amount in recent:
         print(f"{t_type}: Rs. {t_amount}")
     print("----------------------")
-    print("Notes dispensed:")
-    for note, count in notes_dispensed.items():
-        print(f"Rs. {note} x {count}")
+    
