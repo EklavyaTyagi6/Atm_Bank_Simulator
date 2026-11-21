@@ -39,3 +39,27 @@ def withdraw_money(balance, amount):
     if amount > balance:
         return -1
     return balance - amount
+
+# Add dispence function
+
+def dispense_notes(amount):
+    """
+    Splits the withdrawal amount into notes using a nested loop.
+    """
+    # Tuple holding fixed note denominations
+    denominations = (2000, 500, 200, 100)
+    notes_dispensed = {}
+    
+    # For loop with an inner while loop
+    for note in denominations:
+        if note in VALID_NOTES:
+            count = 0
+            while amount >= note:
+                amount -= note
+                count += 1
+            if count > 0:
+                notes_dispensed[note] = count
+                
+    print("Notes dispensed:")
+    for note, count in notes_dispensed.items():
+        print(f"Rs. {note} x {count}")
