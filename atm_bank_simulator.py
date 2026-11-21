@@ -27,4 +27,21 @@ def verify_login(accounts):
 # Adds the deposit amount to the balance.
 
 def deposit_money(balance, amount):
+<<<<<<< Updated upstream
     return balance + amount
+=======
+    return balance + amount
+
+# Adds the withdraw amount to the balance
+
+def withdraw_money(balance, amount):
+    """
+    Deducts the withdrawal amount from the balance if sufficient.
+    Returns -1 if balance is insufficient.
+    """
+    if amount > balance:
+        return -1
+    return balance - amount
+
+
+>>>>>>> Stashed changes
