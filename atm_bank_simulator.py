@@ -140,4 +140,7 @@ def main():
                             print("Invalid amount. Must be a multiple of 100.")
                     else:
                         print("Invalid number.")
-                        
+
+        elif choice == '4':
+            show_mini_statement(accounts[current_acc]['transactions'])
+            
