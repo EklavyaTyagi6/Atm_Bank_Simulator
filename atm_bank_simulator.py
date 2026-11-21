@@ -109,3 +109,16 @@ def main():
         
         if choice == '1':
             print(f"Current Balance: Rs. {accounts[current_acc]['balance']}")
+
+        elif choice == '2':
+            amt_input = input("Enter amount to deposit: ").replace('.', '', 1)
+            if amt_input.isdigit():
+                amt = float(input("Confirm amount: "))
+                if amt > 0:
+                    accounts[current_acc]['balance'] = deposit_money(accounts[current_acc]['balance'], amt)
+                    accounts[current_acc]['transactions'].append(('Deposit', amt))
+                    print("Deposit successful.")
+                else:
+                    print("Amount must be greater than zero.")
+            else:
+                print("Invalid number.")
