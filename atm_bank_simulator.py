@@ -104,3 +104,8 @@ def main():
         print("4. Mini Statement")
         print("5. Calculate Expected Interest")
         print("6. Exit")
+
+        choice = input("Select an option (1-6): ").strip()
+        
+        if choice == '1':
+            print(f"Current Balance: Rs. {accounts[current_acc]['balance']}")
