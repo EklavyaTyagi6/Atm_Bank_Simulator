@@ -59,26 +59,6 @@ def dispense_notes(amount):
                 count += 1
             if count > 0:
                 notes_dispensed[note] = count
-
-def calc_compound_interest(principal, rate, years):
-    """
-    Recursive function to calculate compound interest.
-    """
-    if years <= 0:
-        return principal
-    else:
-        new_principal = principal + (principal * (rate / 100))
-        return calc_compound_interest(new_principal, rate, years - 1)
-
-def show_mini_statement(transactions):
-    """
-    Shows a mini statement of the last five transactions.
-    """
-    print("\n--- Mini Statement ---")
-    recent = transactions[-5:]
-    for t_type, t_amount in recent:
-        print(f"{t_type}: Rs. {t_amount}")
-    print("----------------------")
                 
     print("Notes dispensed:")
     for note, count in notes_dispensed.items():
