@@ -122,3 +122,22 @@ def main():
                     print("Amount must be greater than zero.")
             else:
                 print("Invalid number.")
+
+        elif choice == '3':
+                    amt_input = input("Enter amount to withdraw (multiples of 100): ")
+                    if amt_input.isdigit():
+                        amt = float(amt_input)
+                        if amt > 0 and amt % 100 == 0:
+                            new_balance = withdraw_money(accounts[current_acc]['balance'], amt)
+                            if new_balance == -1:
+                                print("Insufficient balance!")
+                            else:
+                                accounts[current_acc]['balance'] = new_balance
+                                accounts[current_acc]['transactions'].append(('Withdrawal', amt))
+                                dispense_notes(amt)
+                                print("Withdrawal successful.")
+                        else:
+                            print("Invalid amount. Must be a multiple of 100.")
+                    else:
+                        print("Invalid number.")
+                        
