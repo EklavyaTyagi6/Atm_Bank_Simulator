@@ -61,7 +61,8 @@ def dispense_notes(amount):
                 notes_dispensed[note] = count
     print("Notes dispensed:")
     for note, count in notes_dispensed.items():
-        print(f"Rs. {note} x {count}")
+        print(f"Rs. {note} x {count}")           
+
 def calc_compound_interest(principal, rate, years):
     """
     Recursive function to calculate compound interest.
@@ -82,3 +83,64 @@ def show_mini_statement(transactions):
         print(f"{t_type}: Rs. {t_amount}")
     print("----------------------")
     
+def main():
+    # Dictionary containing the main data (replacing the file system)
+    accounts = {
+        '1001': {'pin': '1234', 'balance': 5000.0, 'transactions': [('Deposit', 5000.0)]},
+        '1002': {'pin': '5678', 'balance': 10000.0, 'transactions': [('Deposit', 10000.0)]}
+    }
+
+    print("Welcome to the ATM Simulator")
+    current_acc = verify_login(accounts)
+    
+    if not current_acc:
+        return
+
+    while True:
+        print("\n--- ATM Menu ---")
+        print("1. Check Balance")
+        print("2. Deposit")
+        print("3. Withdraw")
+        print("4. Mini Statement")
+        print("5. Calculate Expected Interest")
+        print("6. Exit")
+
+        choice = input("Select an option (1-6): ").strip()
+        
+        if choice == '1':
+            print(f"Current Balance: Rs. {accounts[current_acc]['balance']}")
+
+        elif choice == '2':
+            amt_input = input("Enter amount to deposit: ").replace('.', '', 1)
+            if amt_input.isdigit():
+                amt = float(input("Confirm amount: "))
+                if amt > 0:
+                    accounts[current_acc]['balance'] = deposit_money(accounts[current_acc]['balance'], amt)
+                    accounts[current_acc]['transactions'].append(('Deposit', amt))
+                    print("Deposit successful.")
+                else:
+                    print("Amount must be greater than zero.")
+            else:
+                print("Invalid number.")
+
+        elif choice == '3':
+                    amt_input = input("Enter amount to withdraw (multiples of 100): ")
+                    if amt_input.isdigit():
+                        amt = float(amt_input)
+                        if amt > 0 and amt % 100 == 0:
+                            new_balance = withdraw_money(accounts[current_acc]['balance'], amt)
+                            if new_balance == -1:
+                                print("Insufficient balance!")
+                            else:
+                                accounts[current_acc]['balance'] = new_balance
+                                accounts[current_acc]['transactions'].append(('Withdrawal', amt))
+                                dispense_notes(amt)
+                                print("Withdrawal successful.")
+                        else:
+                            print("Invalid amount. Must be a multiple of 100.")
+                    else:
+                        print("Invalid number.")
+
+        elif choice == '4':
+            show_mini_statement(accounts[current_acc]['transactions'])
+            
