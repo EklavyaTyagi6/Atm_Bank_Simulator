@@ -28,3 +28,58 @@ def verify_login(accounts):
 
 def deposit_money(balance, amount):
     return balance + amount
+
+# Adds the withdraw amount to the balance
+
+def withdraw_money(balance, amount):
+    """
+    Deducts the withdrawal amount from the balance if sufficient.
+    Returns -1 if balance is insufficient.
+    """
+    if amount > balance:
+        return -1
+    return balance - amount
+
+# Add dispence function
+
+def dispense_notes(amount):
+    """
+    Splits the withdrawal amount into notes using a nested loop.
+    """
+    # Tuple holding fixed note denominations
+    denominations = (2000, 500, 200, 100)
+    notes_dispensed = {}
+    
+    # For loop with an inner while loop
+    for note in denominations:
+        if note in VALID_NOTES:
+            count = 0
+            while amount >= note:
+                amount -= note
+                count += 1
+            if count > 0:
+                notes_dispensed[note] = count
+    print("Notes dispensed:")
+    for note, count in notes_dispensed.items():
+        print(f"Rs. {note} x {count}")           
+
+def calc_compound_interest(principal, rate, years):
+    """
+    Recursive function to calculate compound interest.
+    """
+    if years <= 0:
+        return principal
+    else:
+        new_principal = principal + (principal * (rate / 100))
+        return calc_compound_interest(new_principal, rate, years - 1)
+
+def show_mini_statement(transactions):
+    """
+    Shows a mini statement of the last five transactions.
+    """
+    print("\n--- Mini Statement ---")
+    recent = transactions[-5:]
+    for t_type, t_amount in recent:
+        print(f"{t_type}: Rs. {t_amount}")
+    print("----------------------")
+    
