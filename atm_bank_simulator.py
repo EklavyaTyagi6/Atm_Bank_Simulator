@@ -18,7 +18,6 @@ def get_valid_digits(prompt, required_length):
             return user_text
         print(f"Invalid input. Please enter exactly {required_length} digits.")
 
-
 def load_accounts(filename):
     accounts = {}
     try:
