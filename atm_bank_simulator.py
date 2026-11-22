@@ -159,3 +159,6 @@ def main():
 
         else:
             print("Invalid choice. Please select from 1 to 6.")
+
+if __name__ == "__main__":
+    main()
