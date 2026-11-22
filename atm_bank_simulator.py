@@ -284,16 +284,44 @@ def main():
                     f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}"
                 )
             else:
-                print("Years must be greater than zero.")
+                print("Invalid number.")
 
-        elif choice == 6:
-            save_accounts(DATA_FILE, accounts)
+        elif choice == '3':
+                    amt_input = input("Enter amount to withdraw (multiples of 100): ")
+                    if amt_input.isdigit():
+                        amt = float(amt_input)
+                        if amt > 0 and amt % 100 == 0:
+                            new_balance = withdraw_money(accounts[current_acc]['balance'], amt)
+                            if new_balance == -1:
+                                print("Insufficient balance!")
+                            else:
+                                accounts[current_acc]['balance'] = new_balance
+                                accounts[current_acc]['transactions'].append(('Withdrawal', amt))
+                                dispense_notes(amt)
+                                print("Withdrawal successful.")
+                        else:
+                            print("Invalid amount. Must be a multiple of 100.")
+                    else:
+                        print("Invalid number.")
+
+        elif choice == '4':
+            show_mini_statement(accounts[current_acc]['transactions'])
+            
+        elif choice == '5':
+            years_input = input("Enter number of years to forecast: ")
+            if years_input.isdigit():
+                years = int(years_input)
+                future_val = calc_compound_interest(accounts[current_acc]['balance'], 5.0, years)
+                print(f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}")
+            else:
+                print("Invalid number of years.")
+        
+        elif choice == '6':
             print("Thank you for using the ATM!")
             break
 
         else:
             print("Invalid choice. Please select from 1 to 6.")
-
 
 if __name__ == "__main__":
     main()
