@@ -144,3 +144,11 @@ def main():
         elif choice == '4':
             show_mini_statement(accounts[current_acc]['transactions'])
             
+        elif choice == '5':
+            years_input = input("Enter number of years to forecast: ")
+            if years_input.isdigit():
+                years = int(years_input)
+                future_val = calc_compound_interest(accounts[current_acc]['balance'], 5.0, years)
+                print(f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}")
+            else:
+                print("Invalid number of years.")
