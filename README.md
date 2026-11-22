@@ -1,1 +1,15 @@
-# Atm_Bank_Simulator
+ATM and Bank Account SimulatorA Python command-line application that simulates everyday ATM and banking operations with PIN-based authentication, card blocking, currency note dispensing, mini statements, compound interest forecasting, and persistent text-file storage.FeaturesSecure Login & Card Blocking: Verifies a 12-digit account number and 4-digit PIN, automatically blocking the card after 3 consecutive failed PIN attempts.Check Balance: Displays the current account balance in Indian Rupees (Rs.).Deposit Money: Accepts positive deposit amounts in multiples of Rs. 100 and updates the saved balance and transaction history.Withdraw Money & Note Dispensing: Validates withdrawal amounts (positive multiples of Rs. 100 within available balance) and dispenses the minimum number of notes using Rs. 2000, Rs. 500, Rs. 200, and Rs. 100 denominations.Mini Statement: Lists up to the 5 most recent transactions on the account.Compound Interest Forecast: Projects the future balance over a chosen number of years at a 5.0% annual compound interest rate.Persistent File Storage: Reads and saves account details, blocked status, and running transaction balances in accounts_py.txt.Project StructureAtm_Bank_Simulator/
+├── atm_bank_simulator.py   # Main Python program with ATM logic and menu loop
+├── accounts_py.txt         # Text-based account and transaction data file
+└── README.md               # Project documentation
+RequirementsPython 3.6 or higher (uses only the Python Standard Library; no external dependencies required).How to RunClone the repository:git clone https://github.com/EklavyaTyagi6/Atm_Bank_Simulator.git
+cd Atm_Bank_Simulator
+Run the simulator:python atm_bank_simulator.py
+(On macOS/Linux, use python3 atm_bank_simulator.py if python points to Python 2.)Sample AccountsThe repository includes accounts_py.txt pre-populated with two demo accounts:Account NumberAccount HolderPINStarting Balance123456789100Manish Kumar1234Rs. 6000123456789101Ashish Kumar5678Rs. 16900Menu OptionsAfter logging in, select any of the following options:Check Balance — Display your current account balance.Deposit — Deposit cash in multiples of Rs. 100.Withdraw — Withdraw cash in multiples of Rs. 100 and see the note breakdown.Mini Statement — View your 5 most recent transactions.Calculate Expected Interest — Forecast your future balance at 5.0% annual compound interest.Exit — End the ATM session.Data Storage Format (accounts_py.txt)Each account record is stored in plain text and separated by ----------:Account Number: 123456789100
+Name: Manish Kumar
+PIN: 1234
+Balance: 6000
+Transaction: Deposit | Amount: 5000 | Balance After: 5000
+Transaction: Deposit | Amount: 1000 | Balance After: 6000
+----------
+If accounts_py.txt is missing or empty, the program automatically creates it with default sample accounts on startup.
