@@ -156,3 +156,6 @@ def main():
         elif choice == '6':
             print("Thank you for using the ATM!")
             break
+
+        else:
+            print("Invalid choice. Please select from 1 to 6.")
