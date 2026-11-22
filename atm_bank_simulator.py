@@ -1,8 +1,20 @@
+"""
+ATM and Bank Account Simulator
+
+A command-line ATM simulator supporting PIN-based login with card blocking,
+balance inquiry, deposits, withdrawals with currency note dispensing,
+mini statements, compound interest forecasting, and file-based persistence.
+"""
+
+# Available ATM currency denominations in descending order (for greedy note dispensing)
 VALID_NOTES = (2000, 500, 200, 100)
+
+# Text file used to load and persist account details and transaction history
 DATA_FILE = "accounts_py.txt"
 
 
 def get_valid_int(prompt):
+    """Prompt the user repeatedly until a valid whole number (integer) is entered."""
     while True:
         user_text = input(prompt).strip()
         try:
@@ -12,13 +24,20 @@ def get_valid_int(prompt):
 
 
 def get_valid_digits(prompt, required_length):
+    """Prompt the user until a numeric string of exact length `required_length` is entered."""
     while True:
         user_text = input(prompt).strip()
         if len(user_text) == required_length and user_text.isdigit():
             return user_text
         print(f"Invalid input. Please enter exactly {required_length} digits.")
 
+
 def load_accounts(filename):
+    """Load accounts and transaction history from `filename`.
+
+    If the file does not exist or contains no accounts, default sample accounts
+    are created and saved to `filename`.
+    """
     accounts = {}
     try:
         with open(filename, "r", encoding="utf-8") as file:
@@ -26,13 +45,16 @@ def load_accounts(filename):
 
             for raw_line in file:
                 line = raw_line.strip()
+                # Skip blank lines and account separator lines
                 if not line or line == "----------":
                     continue
 
                 if ":" in line:
+                    # Split only on the first colon so values containing colons stay intact
                     label, value = [part.strip() for part in line.split(":", 1)]
 
                     if label == "Account Number":
+                        # Start a new account record
                         current_acc = value
                         accounts[current_acc] = {
                             "name": "",
@@ -51,6 +73,7 @@ def load_accounts(filename):
                         elif label == "Blocked":
                             accounts[current_acc]["blocked"] = value.lower() == "true"
                         elif label == "Transaction":
+                            # Parse format: "<Type> | Amount: <amount> | Balance After: <bal>"
                             try:
                                 txn_parts = value.split("|")
                                 t_type = txn_parts[0].strip()
@@ -58,10 +81,12 @@ def load_accounts(filename):
                                 t_amount = int(float(amt_part))
                                 accounts[current_acc]["transactions"].append((t_type, t_amount))
                             except (IndexError, ValueError):
+                                # Skip malformed transaction lines without crashing
                                 continue
     except FileNotFoundError:
         pass
 
+    # Initialize default accounts if no data was loaded
     if not accounts:
         accounts = {
             "123456789100": {
@@ -85,6 +110,7 @@ def load_accounts(filename):
 
 
 def save_accounts(filename, accounts):
+    """Write all account records and running transaction balances to `filename`."""
     try:
         with open(filename, "w", encoding="utf-8") as file:
             for acc_num, info in accounts.items():
@@ -95,12 +121,14 @@ def save_accounts(filename, accounts):
                 if info.get("blocked", False):
                     file.write("Blocked: True\n")
 
+                # Compute the starting balance prior to recorded transactions
                 net_txn_change = sum(
-                    amt if t_type == "Deposit" else -amt
+                    amt if t_type == "Deposit" else (-amt if t_type == "Withdrawal" else 0)
                     for t_type, amt in info["transactions"]
                 )
                 running_bal = info["balance"] - net_txn_change
 
+                # Write each transaction along with the running balance after it
                 for t_type, t_amount in info["transactions"]:
                     if t_type == "Deposit":
                         running_bal += t_amount
@@ -116,6 +144,7 @@ def save_accounts(filename, accounts):
 
 
 def ask_continue_or_exit():
+    """Ask the user whether to re-enter an account number or exit the ATM."""
     while True:
         print("1. Continue (Re-enter Account Number)")
         print("2. Exit")
@@ -129,6 +158,11 @@ def ask_continue_or_exit():
 
 
 def verify_login(accounts):
+    """Authenticate a user by 12-digit account number and 4-digit PIN.
+
+    Blocks the card and saves the updated status after 3 consecutive failed PIN attempts.
+    Returns the authenticated account number, or None if the user exits or is blocked.
+    """
     while True:
         account_num = get_valid_digits("Enter your 12-digit Account Number: ", 12)
         if account_num not in accounts:
@@ -137,6 +171,7 @@ def verify_login(accounts):
                 return None
             continue
 
+        # Prevent login if the card is already blocked
         if accounts[account_num].get("blocked", False):
             print("This card is blocked due to multiple failed PIN attempts.")
             if not ask_continue_or_exit():
@@ -146,6 +181,7 @@ def verify_login(accounts):
         attempts = 0
         reenter_account = False
 
+        # Allow up to 3 PIN attempts
         while attempts < 3:
             pin = get_valid_digits("Enter your 4-digit PIN: ", 4)
             if accounts[account_num]["pin"] == pin:
@@ -156,12 +192,14 @@ def verify_login(accounts):
             remaining = 3 - attempts
             print(f"Incorrect PIN. Attempts remaining: {remaining}")
 
+            # Block the card once all 3 attempts are exhausted
             if remaining == 0:
                 accounts[account_num]["blocked"] = True
                 save_accounts(DATA_FILE, accounts)
                 print("Maximum login attempts reached. Your card is blocked!")
                 return None
 
+            # Give the user options after a wrong PIN
             while True:
                 print("1. Try PIN again")
                 print("2. Continue (Re-enter Account Number)")
@@ -182,16 +220,19 @@ def verify_login(accounts):
 
 
 def deposit_money(balance, amount):
+    """Return the updated balance after adding `amount`."""
     return balance + amount
 
 
 def withdraw_money(balance, amount):
+    """Return the updated balance after subtracting `amount`, or -1 if funds are insufficient."""
     if amount > balance:
         return -1
     return balance - amount
 
 
 def dispense_notes(amount):
+    """Break `amount` into the fewest ATM currency notes and display the breakdown."""
     notes_dispensed = {}
     for note in VALID_NOTES:
         count, amount = divmod(amount, note)
@@ -204,12 +245,14 @@ def dispense_notes(amount):
 
 
 def calc_compound_interest(principal, rate, years):
+    """Calculate the compound amount after `years` at an annual interest `rate` (%)."""
     if years <= 0:
         return principal
     return principal * ((1 + rate / 100) ** years)
 
 
 def show_mini_statement(transactions):
+    """Display the 5 most recent transactions for the logged-in account."""
     print("\n--- Mini Statement ---")
     recent = transactions[-5:]
     if not recent:
@@ -221,14 +264,17 @@ def show_mini_statement(transactions):
 
 
 def main():
+    """Run the main ATM simulator workflow: load accounts, log in, and serve menu actions."""
     accounts = load_accounts(DATA_FILE)
 
     print("Welcome to the ATM Simulator")
     current_acc = verify_login(accounts)
 
+    # Exit if login failed, was blocked, or user chose to quit
     if current_acc is None:
         return
 
+    # Main ATM menu loop
     while True:
         print("\n--- ATM Menu ---")
         print("1. Check Balance")
@@ -241,11 +287,13 @@ def main():
         choice = get_valid_int("Select an option (1-6): ")
 
         if choice == 1:
+            # Display current account balance
             print(f"Current Balance: Rs. {accounts[current_acc]['balance']}")
 
         elif choice == 2:
+            # Deposit money (must be positive and a multiple of 100)
             amt = get_valid_int("Enter amount to deposit (multiples of 100): ")
-            if amt > 0 and amt % 5 == 0:
+            if amt > 0 and amt % 100 == 0:
                 accounts[current_acc]["balance"] = deposit_money(
                     accounts[current_acc]["balance"], amt
                 )
@@ -256,8 +304,9 @@ def main():
                 print("Invalid amount. Must be greater than 0 and a multiple of 100.")
 
         elif choice == 3:
+            # Withdraw money (must be positive, a multiple of 100, and within balance)
             amt = get_valid_int("Enter amount to withdraw (multiples of 100): ")
-            if amt > 0 and amt % 5 == 0:
+            if amt > 0 and amt % 100 == 0:
                 new_balance = withdraw_money(accounts[current_acc]["balance"], amt)
                 if new_balance == -1:
                     print("Insufficient balance!")
@@ -271,56 +320,30 @@ def main():
                 print("Invalid amount. Must be greater than 0 and a multiple of 100.")
 
         elif choice == 4:
+            # Show the last 5 transactions
             show_mini_statement(accounts[current_acc]["transactions"])
 
         elif choice == 5:
+            # Forecast compound interest at a fixed 5.0% annual rate
             years = get_valid_int("Enter number of years to forecast: ")
             if years > 0:
                 future_val = calc_compound_interest(
                     accounts[current_acc]["balance"], 5.0, years
                 )
                 print(
-                    f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}"
+                    f"Expected Balance after {years} years at 5.0%: Rs. {future_val:.2f}"
                 )
             else:
-                print("Invalid number.")
+                print("Invalid number. Please enter a positive number of years.")
 
-        elif choice == '3':
-                    amt_input = input("Enter amount to withdraw (multiples of 100): ")
-                    if amt_input.isdigit():
-                        amt = float(amt_input)
-                        if amt > 0 and amt % 100 == 0:
-                            new_balance = withdraw_money(accounts[current_acc]['balance'], amt)
-                            if new_balance == -1:
-                                print("Insufficient balance!")
-                            else:
-                                accounts[current_acc]['balance'] = new_balance
-                                accounts[current_acc]['transactions'].append(('Withdrawal', amt))
-                                dispense_notes(amt)
-                                print("Withdrawal successful.")
-                        else:
-                            print("Invalid amount. Must be a multiple of 100.")
-                    else:
-                        print("Invalid number.")
-
-        elif choice == '4':
-            show_mini_statement(accounts[current_acc]['transactions'])
-            
-        elif choice == '5':
-            years_input = input("Enter number of years to forecast: ")
-            if years_input.isdigit():
-                years = int(years_input)
-                future_val = calc_compound_interest(accounts[current_acc]['balance'], 5.0, years)
-                print(f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}")
-            else:
-                print("Invalid number of years.")
-        
-        elif choice == '6':
+        elif choice == 6:
+            # Exit the ATM session
             print("Thank you for using the ATM!")
             break
 
         else:
             print("Invalid choice. Please select from 1 to 6.")
+
 
 if __name__ == "__main__":
     main()
