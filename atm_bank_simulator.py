@@ -152,3 +152,7 @@ def main():
                 print(f"Expected Balance after {years} years at 5.0%: Rs. {round(future_val, 2)}")
             else:
                 print("Invalid number of years.")
+        
+        elif choice == '6':
+            print("Thank you for using the ATM!")
+            break
