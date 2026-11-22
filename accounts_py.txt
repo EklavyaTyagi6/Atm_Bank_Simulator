@@ -1,0 +1,17 @@
+Account Number: 123456789100
+Name: Manish Kumar
+PIN: 1234
+Balance: 6000
+Transaction: Deposit | Amount: 5000 | Balance After: 5000
+Transaction: Deposit | Amount: 1000 | Balance After: 6000
+----------
+Account Number: 123456789101
+Name: Ashish Kumar
+PIN: 5678
+Balance: 17000
+Transaction: Deposit | Amount: 10000 | Balance After: 10000
+Transaction: Deposit | Amount: 5000 | Balance After: 15000
+Transaction: Withdrawal | Amount: 600 | Balance After: 14400
+Transaction: Deposit | Amount: 3400 | Balance After: 17800
+Transaction: Withdrawal | Amount: 800 | Balance After: 17000
+----------
